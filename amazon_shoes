@@ -1,0 +1,41 @@
+import pandas as pd
+import selenium
+from selenium import webdriver
+
+driver = webdriver.Chrome(r"C:\Users\Merit\Downloads\chromedriver_win32\chromedriver.exe")
+driver.get("https://www.amazon.in/")
+driver.find_element_by_xpath("//a[contains(text(),'Fashion')]").click()
+driver.find_element_by_xpath("//div[@id='nav-subnav']/a[3]").click()
+driver.find_element_by_xpath("//span[contains(text(),'Shoes')]").click()
+driver.find_element_by_xpath("//span[contains(text(),'Sports & Outdoor Shoes')]").click()
+driver.find_element_by_xpath("//span[contains(text(),'See all results')]").click()
+
+#brand
+Brand = []
+brand_names = driver.find_elements_by_xpath("//h5[@class = 's-line-clamp-1']//span[@class='a-size-base-plus a-color-base']")
+for i in brand_names:
+    Brand.append(i.text)
+
+#originalprice
+original_price = []
+org_price = driver.find_elements_by_xpath("//div[@class='a-row a-size-base a-color-base']//span[@class = 'a-price a-text-price']")
+for j in org_price:
+    original_price.append(j.text)
+
+#offerprice
+offerprice = []
+off_price = driver.find_elements_by_xpath("//div[@class='a-row a-size-base a-color-base']//span[@class = 'a-price-whole']")
+for k in off_price:
+    offerprice.append(k.text)
+
+details = zip(Brand,original_price,offerprice)
+
+fname = 'Shoes.xlsx'
+writer = pd.ExcelWriter(r"C:\\Users\\Merit\\Desktop\\assign1"+"\\"+fname,engine = 'xlsxwriter')
+pd.ExcelWriter(fname,engine = 'xlsxwriter')
+detailsDF = pd.DataFrame(details,columns = ['BRAND','ORIGINAL_PRICE','OFFER_PRICE'])
+detailsDF.to_excel(writer,sheet_name = "SHOES",index=False) 
+ 
+driver.close()
+writer.save()
+writer.close()
